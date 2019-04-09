@@ -14,7 +14,8 @@ def import_images(datapath="../data/mnist",MNIST_filename = 'mnist.pkl'):
              MNIST_filename -> A string representing the name of the
                                pickled mnist file
          outputs:
-            Numpy Array (60000,28,28)
+            numpy array (60000,28,28) where each value is a 8 bit
+            integer representing the intensity of the grayscale pixel
     """
     full_path = os.path.join(datapath,MNIST_filename)
     with open(full_path,'rb') as f:
@@ -22,7 +23,39 @@ def import_images(datapath="../data/mnist",MNIST_filename = 'mnist.pkl'):
     print("Done Loading")
     mnist = np.reshape(mnist,[-1,28,28])
     return mnist
-def pad_and_resize(images,padding=9):
+def scale_images(images,scaling=(0,1))
+    """  Scale an array of images to the specified scaling range
+
+         inputs:
+             images -> numpy array of images in the form (x,i,j)
+             where x is the number of images
+                   i is the number of rows
+                   j is the number of columns
+
+             scaling ->  integer tuple (min,max)
+             where min is the minimum value after scaling
+                   max is the maximum value after scaling
+    
+         outputs:
+             numpy array of images scaled from min to max
+    """
+    pass
+def pad_images(images,padding=(0,0)):
+    """  Pads images with 0s to fit a desired shape
+
+         inputs:
+             images -> numpy array of images in the form (x,i,j)
+             where x is the number of images
+                   i is the number of rows
+                   j is the number of columns
+            
+             padding -> integer tuple (row,col)
+             where row is the number of 0s to pad to the beggining and end of each row
+                   col is the number of 0s to pad to the beggining and end of each col
+
+         outputs:
+             padded images of size (x,i + 2 * row,j + 2 * col) 
+    """
     pass
 def synthetic_degredation():
     pass
