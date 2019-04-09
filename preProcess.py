@@ -57,9 +57,26 @@ def pad_images(images,padding=(0,0)):
              padded images of size (x,i + 2 * row,j + 2 * col) 
     """
     pass
-def synthetic_degredation():
+def synthetic_degredation(images,deg_function):
+    """  Applies a degredation to all images in image_array
+         by applying a degredation function
+        inputs:
+            images  -> numpy array of images in the form (x,i,j)  
+            where x is the number of images
+            i is the number of rows
+            j is the number of columns
+
+            deg_function -> (image -> image) function
+         
+        outputs:
+            degredated images -> (x,i,j)
+    """
     pass
-def save_image(img):
-    cv2.imwrite("img_0.jpg",img)
+def save_image(img,img_path="img_0.jpg"):
+    """  Save output image to img_path
+
+    """
+    cv2.imwrite(img_path,img)
+
 img = import_images()[0]
 save_image(img)
