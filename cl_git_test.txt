@@ -1,3 +1,0 @@
-test seeing if i can push from discovery login
-
-now on compute node
