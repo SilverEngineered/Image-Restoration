@@ -23,7 +23,7 @@ def import_images(datapath="../data/mnist",MNIST_filename = 'mnist.pkl'):
     print("Done Loading")
     mnist = np.reshape(mnist,[-1,28,28])
     return mnist
-def scale_images(images,scaling=[0,1],dtype=np.float32)
+def scale_images(images,scaling=[0,1],dtype=np.float32):
     """  Scale an array of images to the specified scaling range
 
          inputs:
@@ -77,12 +77,12 @@ def synthetic_degredation(images,deg_function):
         outputs:
             degredated images -> (x,i,j)
     """
-    return np.array(list(list(images).map(lambda x: deg_function(x)))
+    return np.array(list(list(images).map(lambda x: deg_function(x))))
 def save_image(img,img_path="img_0.jpg"):
     """  Save output image to img_path
 
     """
     cv2.imwrite(img_path,img)
 
-img = import_images()[0]
-save_image(img)
+#img = import_images()[0]
+#save_image(img)

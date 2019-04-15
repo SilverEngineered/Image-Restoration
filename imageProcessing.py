@@ -1,6 +1,6 @@
 import numpy as np
 
-def deg_function(x,filt_param,filt_size,noise_power)
+def deg_function(x,filt_param,filt_size,noise_power):
     """ Performs artificial degradation to a single image.
         The image is first blurred then Gaussian noise is added.
 
@@ -13,7 +13,7 @@ def deg_function(x,filt_param,filt_size,noise_power)
             y -> degraded output image
     """
     pass
-def filter(x,filt_param,filt_size,filt_type="gauss")
+def filter(x,filt_param,filt_size,filt_type="gauss"):
     """ Applies linear filter.
 
         inputs:
@@ -25,7 +25,7 @@ def filter(x,filt_param,filt_size,filt_type="gauss")
             y -> filtered image
     """
     pass
-def inverse_filter(x,filt_param,filt_size,filt_type="gauss",lam=0)
+def inverse_filter(x,filt_param,filt_size,filt_type="gauss",lam=0):
     """ Applies linear inverse filter with regularization.
 
         inputs:
@@ -38,7 +38,7 @@ def inverse_filter(x,filt_param,filt_size,filt_type="gauss",lam=0)
             y -> filtered image
     """
     pass
-def add_noise(x,noise_power)
+def add_noise(x,noise_power):
     """ Adds white Gaussian noise to image.
 
         inputs:
@@ -50,7 +50,7 @@ def add_noise(x,noise_power)
     size_x = x.shape()
     noise = np.random.normal(0,np.sqrt(noise_power),size_x)
     return np.add(x,noise)
-def gauss_filter(filt_param,filt_size)
+def gauss_filter(filt_param,filt_size):
     """ Returns Gaussian filter impulse response as np array.
 
         inputs:
