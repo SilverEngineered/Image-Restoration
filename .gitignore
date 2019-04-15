@@ -1,5 +1,8 @@
 # ignore .gz files
 *.gz
 
+# ignore .pyc
+*.pyc
+
 # ignore pickled mnist
 mnist.pkl
