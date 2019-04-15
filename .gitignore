@@ -1,0 +1,5 @@
+# ignore .gz files
+*.gz
+
+# ignore pickled mnist
+mnist.pkl

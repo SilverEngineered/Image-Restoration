@@ -47,7 +47,9 @@ def add_noise(x,noise_power)
         outputs:
             y -> noisy image
     """
-    pass
+    size_x = x.shape()
+    noise = np.random.normal(0,np.sqrt(noise_power),size_x)
+    return np.add(x,noise)
 def gauss_filter(filt_param,filt_size)
     """ Returns Gaussian filter impulse response as np array.
 
