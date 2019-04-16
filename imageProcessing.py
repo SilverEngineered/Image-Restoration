@@ -58,6 +58,21 @@ def inverse_filter_image(x,sigma,N_filt,filt_type="gauss",lam=0):
     y = np.fft.ifft2(Hffti*np.fft.fft2(x))
     return np.real(y)
 
+def estimate_filter(x,y):
+    """ Given an input and noisy output, estimate the filter.
+
+        inputs:
+            x -> input image
+            y -> noisy filtered output image
+
+        outputs:
+            h -> estimated filter impulse response
+    """
+    X = np.fft.fft2(x)
+    Y = np.fft.fft2(y)
+    H = np.divide(Y,X)
+    return np.real(np.fft.ifft2(H))
+
 def add_noise(x,noise_power):
     """ Adds white Gaussian noise to image.
 
