@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.stats import norm
-
+from tqdm import tqdm
 def degrade_image(x,sigma,N_filt,noise_power):
     """ Performs artificial degradation to a single image.
         The image is first blurred then Gaussian noise is added.
@@ -18,7 +18,7 @@ def degrade_image(x,sigma,N_filt,noise_power):
 def degrade_images(x,sigma,N_filt,noise_power):
     """ Degreades multiple images """
     images = []
-    for i in x:
+    for i in tqdm(x):
         images.append(degrade_image(i,sigma,N_filt,noise_power))
     return np.array(images)
 def filter_image(x,sigma,N_filt,filt_type="gauss"):
@@ -126,6 +126,6 @@ def keep_valid_images(x,keep_shape):
     """ Keep valid portion of filtered images """
 
     images = []
-    for i in range(x.shape[0]):
-        images.append(keep_valid_image(x,keep_shape))
+    for i in tqdm(x):
+        images.append(keep_valid_image(i,keep_shape))
     return np.array(images)
