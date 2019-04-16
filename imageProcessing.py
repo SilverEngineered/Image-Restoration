@@ -19,7 +19,7 @@ def degrade_images(x,sigma,N_filt,noise_power):
     """ Degreades multiple images """
     images = []
     for i in x:
-        images.append(degrade_images(i,sigma,N_filt,noise_power))
+        images.append(degrade_image(i,sigma,N_filt,noise_power))
     return np.array(images)
 def filter_image(x,sigma,N_filt,filt_type="gauss"):
     """ Applies linear filter.

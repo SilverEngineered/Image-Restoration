@@ -21,11 +21,9 @@ if __name__ == "__main__":
     print("Mnist Images Saved")
     padded = pp.pad_images(scaled,pad_shape)
     print("Padding Complete")
-    for i in args.noise_powers:
-        degraded = ip.degrade_images(padded,args.sigma,args.filter_size,i)
-        print("here")
+    for noise in args.noise_powers:
+        degraded = ip.degrade_images(padded,args.sigma,args.filter_size,noise)
         degraded = ip.keep_valid_images(degraded,args.img_size)
-        print("there")
         save_all_images(degraded,args.numpypath + "_deg_"+  str(i))
         print("Degraded Image " + str(i) + " saved")
     
