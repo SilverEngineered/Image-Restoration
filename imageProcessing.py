@@ -107,7 +107,7 @@ def estimate_filter_full(joined_rdd):
             h -> estimated filter impulse response
     """
     h_estimates = joined_rdd.mapValues(lambda (x,y): estimate_filter(x,y))
-    h = h_estimates.values(). \
+    h = h_estimates.values() \
                    .reduce(lambda h1,h2: np.add(h1,h2)) / h_estimates.count()
     return h
 

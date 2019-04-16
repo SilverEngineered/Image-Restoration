@@ -24,10 +24,10 @@ def total_rss(xhat_rdd):
             total_rss -> total RSS between clean and restored images
     """    
     rss_rdd = joined_rdd.mapValues(lambda (x,xhat): rss(x,xhat))
-    return rss_rdd.values(). \
+    return rss_rdd.values() \
                   .reduce(lambda rss1,rss2: rss1+rss2) / rss_rdd.count()
 
-def cross_validate(x_rdd,y_rdd,k=10,lam=[0])
+def cross_validate(x_rdd,y_rdd,k=10,lam=[0]):
     """ Perform cross validation between clean and restored image RDDs.
 
         inputs:
@@ -50,9 +50,9 @@ def cross_validate(x_rdd,y_rdd,k=10,lam=[0])
         rssk = []
         for i in range(k):
             # split data into training and validation sets
-            train_rdd = joined_rdd.filter(lambda (idx,val): \ 
+            train_rdd = joined_rdd.filter(lambda (idx,val):  
                                           index_to_fold(idx,N,k) != i)
-            validate_rdd = joined_rdd.filter(lambda (idx,val): \ 
+            validate_rdd = joined_rdd.filter(lambda (idx,val):  
                                              index_to_fold(idx,N,k) == i)
 
             # learn restoration filter from training set
