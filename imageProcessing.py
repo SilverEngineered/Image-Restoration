@@ -15,7 +15,12 @@ def degrade_image(x,sigma,N_filt,noise_power):
     """
     x_filt = filter_image(x,sigma,N_filt)
     return add_noise(x_filt,noise_power)
-
+def degrade_images(x,sigma,N_filt,noise_power):
+    """ Degreades multiple images """
+    images = []
+    for i in x:
+        images.append(degrade_images(i,sigma,N_filt,noise_power))
+    return np.array(images)
 def filter_image(x,sigma,N_filt,filt_type="gauss"):
     """ Applies linear filter.
 
@@ -117,3 +122,10 @@ def keep_valid_image(x,keep_shape):
             y -> N1-by-N2 valid image
     """
     return x[-keep_shape[0]-1:-1,-keep_shape[1]-1:-1]
+def keep_valid_images(x,keep_shape):
+    """ Keep valid portion of filtered images """
+
+    images = []
+    for i in range(x.shape[0]):
+        images.append(keep_valid_image(x,keep_shape))
+    return np.array(images)
