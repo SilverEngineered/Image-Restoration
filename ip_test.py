@@ -40,3 +40,8 @@ pp.save_image(yi_scale,'test_images/yi_%.2f.jpg' % lam)
 deg_img = ip.degrade_image(noise_pad,sigma,Nfilt,noise_power)
 deg_scale = pp.scale_images(deg_img,scaling=[0,255],dtype=np.uint8)
 pp.save_image(deg_scale,'test_images/deg_img_%.2f.jpg' % noise_power)
+
+deg_img_valid = ip.keep_valid_image(deg_img,im_size)
+print 'deg_img_valid.shape: ',deg_img_valid.shape
+deg_valid_scale = pp.scale_images(deg_img_valid,scaling=[0,255],dtype=np.uint8)
+pp.save_image(deg_valid_scale,'test_images/deg_img_valid.jpg')

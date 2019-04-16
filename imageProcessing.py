@@ -90,8 +90,15 @@ def gauss_filter(sigma,N):
 
     return np.outer(h,h)
 
+def keep_valid_image(x,keep_shape):
+    """ Keeps valid portion of filtered image.
 
-
-
-
-
+        inputs:
+            x          -> filterd image
+            keep_shape -> (N1,N2) dimensions of valid image
+                          (should be same as original image)
+        
+        outputs:
+            y -> N1-by-N2 valid image
+    """
+    return x[-keep_shape[0]-1:-1,-keep_shape[1]-1:-1]
