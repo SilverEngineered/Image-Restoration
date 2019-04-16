@@ -58,6 +58,23 @@ def inverse_filter_image(x,sigma,N_filt,filt_type="gauss",lam=0):
     y = np.fft.ifft2(Hffti*np.fft.fft2(x))
     return np.real(y)
 
+def restore_image(y,h,lam=0):
+    """ Restores an image using a regularized inverse filter.
+
+        inputs:
+            y   -> image to restore
+            h   -> filter impulse response (same size as x)
+            lam -> regularization parameter
+       
+        outputs:
+            xhat -> restored image
+    """
+    H = np.fft.fft2(h)
+    Hi = np.divide(np.conj(H),np.add(np.abs(H)**2,lam))
+    Y = np.fft.fft2(y)
+    Xhat = np.multiply(Y,Hi)
+    xhat = np.real(np.fft.ifft2(Xhat))
+
 def estimate_filter(x,y):
     """ Given an input and noisy output, estimate the filter.
 
@@ -72,6 +89,22 @@ def estimate_filter(x,y):
     Y = np.fft.fft2(y)
     H = np.divide(Y,X)
     return np.real(np.fft.ifft2(H))
+
+def estimate_filter_full(joined_rdd):
+    """ Given an rdd of clean images and noisy outputs, estimate the filter 
+        by averaging filter estimates of each image pair.
+
+        inputs:
+            joined_rdd -> key value pairs of the form (idx, (x,y)) where
+                          x is the clean image and y is the noisy degraded image
+
+        outputs:
+            h -> estimated filter impulse response
+    """
+    h_estimates = joined_rdd.mapValues(lambda (x,y): estimate_filter(x,y))
+    h = h_estimates.values(). \
+                   .reduce(lambda h1,h2: np.add(h1,h2)) / h_estimates.count()
+    return h
 
 def add_noise(x,noise_power):
     """ Adds white Gaussian noise to image.
