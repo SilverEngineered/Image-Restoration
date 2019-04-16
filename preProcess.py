@@ -3,7 +3,7 @@ import os
 import gzip
 import pickle
 import cv2
-def import_images(datapath="../data/mnist",MNIST_filename = 'mnist.pkl'):
+def import_images(datapath="../data/mnist/mnist.pkl"):
     """  Import pickled mnist data and save it as a numpy array in the
          shape of (60000,28,28) where each 0th element of the array
          is a black and white MNIST image
@@ -17,8 +17,7 @@ def import_images(datapath="../data/mnist",MNIST_filename = 'mnist.pkl'):
             numpy array (60000,28,28) where each value is a 8 bit
             integer representing the intensity of the grayscale pixel
     """
-    full_path = os.path.join(datapath,MNIST_filename)
-    with open(full_path,'rb') as f:
+    with open(datapath,'rb') as f:
         mnist = pickle.load(f)["training_images"]
     print("Done Loading")
     mnist = np.reshape(mnist,[-1,28,28])
@@ -61,7 +60,7 @@ def pad_images(images,pad_shape=(0,0)):
     """
     padded_images = []
     for i in range(images.shape[0]):
-        padded_images.append[np.pad(images,pad_shape,'constant')]
+        padded_images.append(np.pad(images[i],pad_shape,'constant'))
     return np.array(padded_images)
 def synthetic_degredation(images,deg_function):
     """  Applies a degredation to all images in image_array
@@ -83,6 +82,11 @@ def save_image(img,img_path="img_0.jpg"):
 
     """
     cv2.imwrite(img_path,img)
+def save_all_images(data,path):
+    """  Save all images as numpy binary file to path
 
-#img = import_images()[0]
-#save_image(img)
+    """
+    np.save(path,data)
+
+#img = import_images()
+#save_all_images(img,"../data/mnist/all")
