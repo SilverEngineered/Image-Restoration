@@ -29,21 +29,20 @@ def total_rss(xhat_rdd):
     return rss_rdd.values() \
                   .reduce(lambda rss1,rss2: rss1+rss2) / rss_rdd.count()
 
-def cross_validate(x_rdd,y_rdd,k=10,lam=[0]):
+def cross_validate(joined_rdd,k=10,lam=[0]):
     """ Perform cross validation between clean and restored image RDDs.
 
         inputs:
-            x_rdd -> rdd of clean training images
-            y_rdd -> rdd of dirty images
+            joined_rdd -> joined key-value pair rdd of clean and degraded images
             k     -> number of folds (default = 10)
             lam   -> list of lambda values to test
 
         outputs:
             rss_list -> list of total_rss computed for each value of lam
     """
-    N = x_rdd.count()              # total number of samples
+    N = joined_rdd.count()              # total number of samples
 
-    joined_rdd = x_rdd.join(y_rdd) # join image pairs
+    # joined_rdd = x_rdd.join(y_rdd) # join image pairs
      
     rss = []
     for j in tqdm(range(len(lam))):
@@ -51,9 +50,9 @@ def cross_validate(x_rdd,y_rdd,k=10,lam=[0]):
         for i in tqdm(range(k)):
             # split data into training and validation sets
             train_rdd = joined_rdd.filter(lambda (idx,val):  
-                                          index_to_fold(idx,N,k) != i)
+                                          index_to_fold(idx,N,k) != i).cache()
             validate_rdd = joined_rdd.filter(lambda (idx,val):  
-                                             index_to_fold(idx,N,k) == i)
+                                             index_to_fold(idx,N,k) == i).cache()
 
             # learn restoration filter from training set
             h = ip.estimate_filter_full(train_rdd)
