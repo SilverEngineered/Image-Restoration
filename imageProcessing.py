@@ -75,10 +75,10 @@ def restore_image(y,h,lam=0):
             xhat -> restored image
     """
     H = np.fft.fft2(h)
-    Hi = np.divide(np.conj(H),np.add(np.abs(H)**2,lam))
+    Hi = np.divide(np.conj(H),np.add(np.multiply(np.conj(H),H),1.0*lam))
     Y = np.fft.fft2(y)
     Xhat = np.multiply(Y,Hi)
-    xhat = np.real(np.fft.ifft2(Xhat))
+    return np.real(np.fft.ifft2(Xhat))
 
 def estimate_filter(x,y):
     """ Given an input and noisy output, estimate the filter.
@@ -93,7 +93,8 @@ def estimate_filter(x,y):
     X = np.fft.fft2(x)
     Y = np.fft.fft2(y)
     H = np.divide(Y,X)
-    return np.real(np.fft.ifft2(H))
+    h = np.fft.ifft2(H)
+    return np.real(h)
 
 def estimate_filter_full(joined_rdd):
     """ Given an rdd of clean images and noisy outputs, estimate the filter 
