@@ -55,11 +55,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--x_data_path", default='../data/mnist/mnist.npy')    
     parser.add_argument("--y_data_path", default='../data/mnist/deg/0.0.npy')
-    parser.add_argument("--lambdas", default=[2* i for i in range(2)])    
-    parser.add_argument("--k", type = int,default=2)
-    parser.add_argument("--num_partitions", default=10)
+    parser.add_argument("--lambdas", default=[2* i for i in range(10)])    
+    parser.add_argument("--k", type = int,default=10)
+    parser.add_argument("--num_partitions", type = int,default=10)
     parser.add_argument("--save_image", default=True)
-    parser.add_argument("--num_images", type=int, default=30)
+    parser.add_argument("--num_images", type=int, default=300)
     parser.add_argument("--num_imgs_to_save", default=5)
     args = parser.parse_args()
 
@@ -69,9 +69,9 @@ if __name__ == "__main__":
 
     sc = SparkContext()
 
-    xrdd = npToRDD(args.x_data_path,sc,args.num_partitions,args.num_images)
-    yrdd = npToRDD(args.y_data_path,sc,args.num_partitions,args.num_images)
-    joined = xrdd.join(yrdd)
+    xrdd = npToRDD(args.x_data_path,sc,args.num_partitions,args.num_images).cache()
+    yrdd = npToRDD(args.y_data_path,sc,args.num_partitions,args.num_images).cache()
+    joined = xrdd.join(yrdd).partitionBy(numPartitions=args.num_partitions).cache()
     start = time.time()
     rss_vals = cv.cross_validate(xrdd,yrdd,args.k,args.lambdas)
     best_lam = args.lambdas[np.argmin(rss_vals)]
