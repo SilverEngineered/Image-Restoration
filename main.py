@@ -6,6 +6,28 @@ import imageProcessing as ip
 import preProcess as pp
 import time
 import csv
+import os
+
+def saveImagesFromRDD(z,x,y,num_imgs,np):
+    """ Saves Images from an RDD of scaled down images
+
+        inputs:
+            z -> (index,restored image) where image is scaled [0,1]
+            x -> (index,original image) where image is scaled [0,1]
+            y -> (index,distorted image) where image is scaled [0,1]
+            num_imgs -> the number of images to be saved
+            np -> noise power
+    """
+    z_imgs = z.sortBy(lambda x: x[0]).take(num_imgs)
+    x_imgs = x.sortBy(lambda x: x[0]).take(num_imgs)
+    y_imgs = y.sortBy(lambda x: x[0]).take(num_imgs)
+    for i in range(num_imgs):
+        scaled_z = (z_imgs[i][1]*255).astype(int)
+        scaled_x = (x_imgs[i][1]*255).astype(int)
+        scaled_y = (y_imgs[i][1]*255).astype(int)
+        pp.save_image(scaled_z,"./output_images/restored/" + str(i) + "_np=" + str(np)+".jpg")
+        pp.save_image(scaled_x,"./output_images/original/" + str(i) + "_np=" + str(np)+".jpg")
+        pp.save_image(scaled_y,"./output_images/deg/" + str(i) + "_np=" + str(np)+".jpg")
 def npToRDD(path,sc,N,num_images):
     """ Loads an np binary file and converts it to an RDD
 
@@ -33,12 +55,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--x_data_path", default='../data/mnist/mnist.npy')    
     parser.add_argument("--y_data_path", default='../data/mnist/deg/0.0.npy')
-    parser.add_argument("--lambdas", default=[2* i for i in range(10)])    
-    parser.add_argument("--k", type = int,default=10)
+    parser.add_argument("--lambdas", default=[2* i for i in range(2)])    
+    parser.add_argument("--k", type = int,default=2)
     parser.add_argument("--num_partitions", default=10)
-    parser.add_argument("--save_image", default=False)
-    parser.add_argument("--num_images", type=int, default=300)
-    parser.add_argument("--img_index_to_save", default=0)
+    parser.add_argument("--save_image", default=True)
+    parser.add_argument("--num_images", type=int, default=30)
+    parser.add_argument("--num_imgs_to_save", default=5)
     args = parser.parse_args()
 
     noise_power_str = args.y_data_path.split('/')[-1]
@@ -62,5 +84,12 @@ if __name__ == "__main__":
     writeOutput(args.y_data_path,args.num_partitions,best_lam,time_elps, 
                 args.lambdas,rss_vals,data_out)
     if args.save_image:
-        img = pp.scale_images(Z.collect(),scaling=[0,255])[0]
-        pp.save_image(img)
+        if not os.path.exists("output_images/"):
+            os.mkdir("output_images/")
+        if not os.path.exists("output_images/restored"):
+            os.mkdir("output_images/restored/")
+        if not os.path.exists("output_images/original"):
+            os.mkdir("output_images/original/")
+        if not os.path.exists("output_images/deg"):
+            os.mkdir("output_images/deg/")
+        saveImagesFromRDD(Z,xrdd,yrdd,args.num_imgs_to_save,noise_power_str)
