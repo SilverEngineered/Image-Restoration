@@ -1,5 +1,6 @@
 import numpy as np
 import imageProcessing as ip
+from tqdm import tqdm
 
 def rss(x,xhat):
     """ Compute the residual sum of squares (RSS) for a single image.
@@ -45,9 +46,9 @@ def cross_validate(x_rdd,y_rdd,k=10,lam=[0]):
     joined_rdd = x_rdd.join(y_rdd) # join image pairs
      
     rss = []
-    for j in range(len(lam)):
+    for j in tqdm(range(len(lam))):
         rssk = []
-        for i in range(k):
+        for i in tqdm(range(k)):
             # split data into training and validation sets
             train_rdd = joined_rdd.filter(lambda (idx,val):  
                                           index_to_fold(idx,N,k) != i)

@@ -75,7 +75,9 @@ def restore_image(y,h,lam=0):
             xhat -> restored image
     """
     H = np.fft.fft2(h)
-    Hi = np.divide(np.conj(H),np.add(np.multiply(np.conj(H),H),1.0*lam))
+    Hmag = np.conj(H)*H
+    Hi_denom = Hmag + 1.0*lam
+    Hi = np.divide(H,Hi_denom)
     Y = np.fft.fft2(y)
     Xhat = np.multiply(Y,Hi)
     return np.real(np.fft.ifft2(Xhat))

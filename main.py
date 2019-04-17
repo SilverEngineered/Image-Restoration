@@ -23,17 +23,18 @@ def npToRDD(path,sc,N,num_images):
     return sc.parallelize(img_with_index).partitionBy(numPartitions=N)
 def writeOutput(y_path,N,lam,time_elps,filename):
     """  Outputs analysis information to specified filename as csv file """
-    with open(filename) as csv_file:
+    with open(filename,'w') as csv_file:
         writer = csv.writer(csv_file,delimiter=',',quotechar='"')
-        writer.writerow("YRDD Input File", "Num Partitions", "Best Lambda", "Time Taken")
-        writer.writerow([y_path,N,lam,time_elps])
-        writer.writerow()
+        writer.writerow(["YRDD Input File", "Num Partitions", "Best Lambda", "Time Taken"])
+        data_row = [y_path,str(N),str(lam),str(time_elps)]
+        writer.writerow(data_row)
+        writer.writerow([])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--x_data_path", default='../data/mnist/mnist.npy')    
     parser.add_argument("--y_data_path", default='../data/mnist/deg/0.0.npy')
-    parser.add_argument("--lambdas", default=[.1* i for i in range(10)])    
+    parser.add_argument("--lambdas", default=[2* i for i in range(10)])    
     parser.add_argument("--k", type = int,default=10)
     parser.add_argument("--num_partitions", default=10)
     parser.add_argument("--data_out", default="analysis.csv")
@@ -49,12 +50,16 @@ if __name__ == "__main__":
     joined = xrdd.join(yrdd)
     start = time.time()
     rss_vals = cv.cross_validate(xrdd,yrdd,args.k,args.lambdas)
-    best_lam = lambdas[np.argmin(rss_vals)]
+    best_lam = args.lambdas[np.argmin(rss_vals)]
+    
+    H = ip.estimate_filter_full(joined) 
+    Z = yrdd.mapValues(lambda y: ip.restore_image(y,H,best_lam))
 
-    H = ip.estimate_filter_full(joined)
-    Z = ip.restore_image(yrdd,best_lam,H)
-
-    time_elps = start - time.time()
+    time_elps = time.time() - start
+    
+    print 'rss_vals: ',rss_vals
+    print ' lambdas: ',args.lambdas
+    
     writeOutput(args.y_data_path,args.num_partitions,best_lam,time_elps,args.data_out)
     if args.save_image:
         img = pp.scale_images(Z.collect(),scaling=[0,255])[0]
