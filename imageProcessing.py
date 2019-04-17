@@ -76,7 +76,7 @@ def restore_image(y,h,lam=0):
     """
     H = np.fft.fft2(h)
     Hmag = np.conj(H)*H
-    Hi_denom = Hmag + 1.0*lam
+    Hi_denom = (1.0 + 0.0j)*Hmag + (1.0 + 0.0j)*lam
     Hi = np.divide(H,Hi_denom)
     Y = np.fft.fft2(y)
     Xhat = np.multiply(Y,Hi)
@@ -94,7 +94,7 @@ def estimate_filter(x,y):
     """
     X = np.fft.fft2(x)
     Y = np.fft.fft2(y)
-    H = np.divide(Y,X)
+    H = (1.0 + 0.0j)*Y / ( (1.0 + 0.0j)*X )
     h = np.fft.ifft2(H)
     return np.real(h)
 
