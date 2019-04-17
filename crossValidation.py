@@ -1,4 +1,5 @@
 import numpy as np
+import imageProcessing as ip
 
 def rss(x,xhat):
     """ Compute the residual sum of squares (RSS) for a single image.
@@ -23,7 +24,7 @@ def total_rss(xhat_rdd):
         outputs:
             total_rss -> total RSS between clean and restored images
     """    
-    rss_rdd = joined_rdd.mapValues(lambda (x,xhat): rss(x,xhat))
+    rss_rdd = xhat_rdd.mapValues(lambda (x,xhat): rss(x,xhat))
     return rss_rdd.values() \
                   .reduce(lambda rss1,rss2: rss1+rss2) / rss_rdd.count()
 
@@ -40,11 +41,9 @@ def cross_validate(x_rdd,y_rdd,k=10,lam=[0]):
             rss_list -> list of total_rss computed for each value of lam
     """
     N = x_rdd.count()              # total number of samples
-    N_per_fold = np.floor(1.0*N/k) # number of samples per fold
-    folds = []                     # fold label for each sample
 
     joined_rdd = x_rdd.join(y_rdd) # join image pairs
-    
+     
     rss = []
     for j in range(len(lam)):
         rssk = []
@@ -56,10 +55,10 @@ def cross_validate(x_rdd,y_rdd,k=10,lam=[0]):
                                              index_to_fold(idx,N,k) == i)
 
             # learn restoration filter from training set
-            h = estimate_filter_full(train_rdd)
+            h = ip.estimate_filter_full(train_rdd)
 
             # restore validation images
-            restore_fun = lambda y: restore_image(y,h,lam[j])
+            restore_fun = lambda y: ip.restore_image(y,h,lam[j])
             xhat_rdd = validate_rdd.mapValues(lambda (x,y): (x,restore_fun(y)))
 
             # compute RSS 
