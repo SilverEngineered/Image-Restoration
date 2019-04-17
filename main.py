@@ -6,7 +6,7 @@ import imageProcessing as ip
 import preProcess as pp
 import time
 import csv
-def npToRDD(path,sc,N):
+def npToRDD(path,sc,N,num_images):
     """ Loads an np binary file and converts it to an RDD
 
         inputs:
@@ -18,7 +18,7 @@ def npToRDD(path,sc,N):
     """
     imgs = np.load(path)
     img_with_index = []
-    for i in range(6000):
+    for i in range(num_images):
         img_with_index.append((i,imgs[i]))
     return sc.parallelize(img_with_index).partitionBy(numPartitions=N)
 def writeOutput(y_path,N,lam,time_elps,filename):
@@ -34,17 +34,18 @@ if __name__ == "__main__":
     parser.add_argument("--x_data_path", default='../data/mnist/mnist.npy')    
     parser.add_argument("--y_data_path", default='../data/mnist/deg/0.0.npy')
     parser.add_argument("--lambdas", default=[.1* i for i in range(10)])    
-    parser.add_argument("--k", default=10)
+    parser.add_argument("--k", type = int,default=10)
     parser.add_argument("--num_partitions", default=10)
     parser.add_argument("--data_out", default="analysis.csv")
     parser.add_argument("--save_image", default=False)
+    parser.add_argument("--num_images", default=300)
     parser.add_argument("--img_index_to_save", default=0)
     args = parser.parse_args()
 
     sc = SparkContext()
 
-    xrdd = npToRDD(args.x_data_path,sc,args.num_partitions)
-    yrdd = npToRDD(args.y_data_path,sc,args.num_partitions)
+    xrdd = npToRDD(args.x_data_path,sc,args.num_partitions,args.num_images)
+    yrdd = npToRDD(args.y_data_path,sc,args.num_partitions,args.num_images)
     joined = xrdd.join(yrdd)
     start = time.time()
     rss_vals = cv.cross_validate(xrdd,yrdd,args.k,args.lambdas)
