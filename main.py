@@ -39,7 +39,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_partitions", default=10)
     parser.add_argument("--data_out", default="analysis.csv")
     parser.add_argument("--save_image", default=False)
-    parser.add_argument("--num_images", default=300)
+    parser.add_argument("--num_images", type=int, default=300)
     parser.add_argument("--img_index_to_save", default=0)
     args = parser.parse_args()
 
