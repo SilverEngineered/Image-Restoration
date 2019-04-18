@@ -61,6 +61,7 @@ for i in lamrssFiles:
 
 plot_val="partitions"
 plot_val="rss"
+plot_val="isnr"
 if(plot_val=="partitions"):
     plt.plot(numParts,times,label='noise_power=.1')
     plt.plot(numParts5,times5,label='noise_power=.5')
@@ -80,7 +81,14 @@ if(plot_val=="rss"):
     plt.legend()
     plt.show()
 
-
+noises=[0.0,0.1,0.5]
+isnr=[60.77610941818108,61.439041325908775,63.63875018978625]
+if(plot_val=="isnr"):
+    plt.plot(noises,isnr)
+    plt.title("Noise Power Vs ISNR")
+    plt.xlabel("noises")
+    plt.ylabel("isnr value")
+    plt.show()
 
 
 
