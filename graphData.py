@@ -17,8 +17,9 @@ datapath="./output_analysis/"
 files = os.listdir(datapath)
 n5=list(filter(lambda x: ".5" in x,files))
 n1=list(filter(lambda x: ".1" in x,files))
-
-
+datapath2="./output_analysis2/"
+lamrssFiles = os.listdir(datapath2)
+lamrssFiles.sort()
 
 #Fields:
 #0 = y Data path
@@ -39,8 +40,8 @@ for i in n1:
     numParts.append(x)
     x=float(getContentFromFile(i,datapath,5))
     times.append(x)
-print(numParts)
-print(times)
+#print(numParts)
+#print(times)
 
 numParts5 = []
 times5 = []
@@ -49,13 +50,37 @@ for i in n5:
     numParts5.append(x)
     x=float(getContentFromFile(i,datapath,5))
     times5.append(x)
-plt.plot(numParts,times,label='noise_power=.1')
-plt.plot(numParts5,times5,label='noise_power=.5')
-plt.title("Number of Partitions vs Time")
-plt.xlabel("Number of Partitions")
-plt.ylabel("Time to complete 1000 images (s)")
-plt.legend()
-plt.show()
+
+lambdas=[2*i for i in range(20)]
+rss_vals = []
+for i in lamrssFiles:
+    x=getContentFromFile(i,datapath2,7)[1:-1]
+    x=x.split(',')
+    x = [float(i) for i in x]
+    rss_vals.append(x)
+
+plot_val="partitions"
+plot_val="rss"
+if(plot_val=="partitions"):
+    plt.plot(numParts,times,label='noise_power=.1')
+    plt.plot(numParts5,times5,label='noise_power=.5')
+    plt.title("Number of Partitions vs Time")
+    plt.xlabel("Number of Partitions")
+    plt.ylabel("Time to complete 1000 images (s)")
+    plt.legend()
+    plt.show()
     
+if(plot_val=="rss"):
+    for i in range(len(rss_vals)):
+        label="noise_power" + str(.1*i)
+        plt.plot(lambdas,rss_vals[i],label=label)
+    plt.title("Lambda vs RSS Values")
+    plt.xlabel("Lambda Value")
+    plt.ylabel("RSS Value")
+    plt.legend()
+    plt.show()
+
+
+
 
 
